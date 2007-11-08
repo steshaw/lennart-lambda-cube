@@ -13,7 +13,7 @@ iota n =
 	start :: T;
 	start = pair Nat LNat 0 (Nil Nat);
         res :: T;
-	res = nat T step start n;
+	res = natprim T step start n;
     in  reverse Nat (snd Nat LNat res);
 
 replicate :: forall (a::*) . Nat -> a -> List a;

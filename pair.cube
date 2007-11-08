@@ -1,8 +1,8 @@
 Pair :: * -> * -> *;
-Pair a b = forall (r::*) . (a->b->r) -> r;
+Pair a b = forall (pairt::*) . (a->b->pairt) -> pairt;
 
 pair :: forall (a::*) (b::*) . a -> b -> Pair a b;
-pair a b x y = \ (r::*) (pair :: a->b->r) -> pair x y;
+pair a b x y = \ (pairt::*) (pair :: a->b->pairt) -> pair x y;
 
 split :: forall (a::*) (b::*) (r::*) . (a->b->r) -> Pair a b -> r;
 split a b r f p = p r f;

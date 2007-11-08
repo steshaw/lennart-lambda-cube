@@ -1,6 +1,6 @@
 Type:
 forall (Char :: *) .
-       Char->forall (a' :: *) . a'->(Char->a'->a')->a'
+       Char->forall (list :: *) . list->(Char->list->list)->list
 Value:
-\ (Char :: *) ('b' :: Char) (a :: *) (nil :: a)
-  (cons :: Char->a->a) -> cons 'b' (cons 'b' (cons 'b' nil))
+\ (Char :: *) ('b' :: Char) (list :: *) (nil :: list)
+  (cons :: Char->list->list) -> cons 'b' (cons 'b' (cons 'b' nil))

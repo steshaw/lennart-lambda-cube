@@ -7,8 +7,8 @@ Nat = forall (nat::*) . nat -> (nat->nat) -> nat;
 Succ :: Nat -> Nat;
 Succ n = \ (nat::*) (zero::nat) (succ::nat->nat) -> succ (n nat zero succ);
 
-nat :: forall (r::*) . (r->r) -> r -> Nat -> r;
-nat r succ zero n = n r zero succ;
+natprim :: forall (r::*) . (r->r) -> r -> Nat -> r;
+natprim r succ zero n = n r zero succ;
 
 add :: Nat -> Nat -> Nat;
 add x y = x Nat y (\ r :: Nat -> Succ r);
