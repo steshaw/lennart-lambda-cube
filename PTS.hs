@@ -6,7 +6,7 @@ import List(union, (\\))
 import Control.Monad.Error
 import Text.PrettyPrint.HughesPJ(Doc, renderStyle, style, text, (<>), (<+>), parens, ($$),
        				 vcat, punctuate, sep, fsep, nest)
-import Text.ParserCombinators.ReadP(ReadP, (+++), char, munch, munch1, many1, string, pfail, sepBy1,
+import Text.ParserCombinators.ReadP(ReadP, (+++), char, munch1, many1, string, pfail, sepBy1,
 	 optional, many, skipSpaces, readP_to_S, look)
 
 type Sym = String
@@ -24,12 +24,15 @@ type Type = Expr
 
 data Kind = Star | Box deriving (Eq)
 
+expandLet :: Sym -> Type -> Expr -> Expr -> Expr
+expandLet i t e b = App (Lam i t b) e
+
 freeVars :: Expr -> [Sym]
 freeVars (Var s) = [s]
 freeVars (App f a) = freeVars f `union` freeVars a
 freeVars (Lam i t e) = freeVars t `union` (freeVars e \\ [i])
 freeVars (Pi i k t) = freeVars k `union` (freeVars t \\ [i])
-freeVars (Let i t e b) = freeVars t `union` freeVars e `union` (freeVars b \\ [i])
+freeVars (Let i t e b) = freeVars (expandLet i t e b)
 freeVars (Kind _) = []
 
 subst :: Sym -> Expr -> Expr -> Expr
@@ -38,7 +41,7 @@ subst v x = sub
         sub (App f a) = App (sub f) (sub a)
         sub (Lam i t e) = abstr Lam i t e
         sub (Pi i t e) = abstr Pi i t e
-	sub (Let i t e b) = let App (Lam i' t' b') e' = sub (App (Lam i t b) e)
+	sub (Let i t e b) = let App (Lam i' t' b') e' = sub (expandLet i t e b)
 	    	       	    in  Let i' t' e' b'
         sub (Kind k) = Kind k
         fvx = freeVars x
@@ -59,7 +62,7 @@ whnf :: Expr -> Expr
 whnf ee = spine ee []
   where spine (App f a) as = spine f (a:as)
         spine (Lam s _ e) (a:as) = spine (subst s a e) as
-	spine (Let i t e b) as = spine (App (Lam i t b) e) as
+	spine (Let i t e b) as = spine (expandLet i t e b) as
         spine f as = foldl App f as
 
 nf :: Expr -> Expr
@@ -68,7 +71,7 @@ nf ee = spine ee []
         spine (Lam s t e) [] = Lam s (nf t) (nf e)
         spine (Lam s _ e) (a:as) = spine (subst s a e) as
         spine (Pi s k t) as = app (Pi s (nf k) (nf t)) as
-	spine (Let i t e b) as = spine (App (Lam i t b) e) as
+	spine (Let i t e b) as = spine (expandLet i t e b) as
         spine f as = app f as
         app f as = foldl App f (map nf as)
 
@@ -138,9 +141,8 @@ tCheck r (Pi x a b) = do
     t <- tCheckRed r' b
     when ((s, t) `notElem` allowedKinds) $ throwError "Bad abstraction"
     return t
-tCheck _ (Kind Star) = return $ Kind Star
---tCheck _ (Kind Star) = return $ Kind Box
---tCheck _ (Kind Box) = throwError "Found a Box"
+tCheck _ (Kind Star) = return $ Kind Box
+tCheck _ (Kind Box) = throwError "Found a Box"
 
 allowedKinds :: [(Type, Type)]
 allowedKinds = [(Kind Star, Kind Star), (Kind Star, Kind Box), (Kind Box, Kind Star), (Kind Box, Kind Box)]
@@ -271,7 +273,8 @@ pBindH = do
      else
         return (sy, ty, Just e)
 
-matchH t [] e = return e
+matchH :: Expr -> [Sym] -> Expr -> ReadP Expr
+matchH _ [] e = return e
 matchH (Pi v t t') (a:as) e | v == a || v == "_" = do
     e' <- matchH t' as e
     return (Lam a t e')
