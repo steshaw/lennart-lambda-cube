@@ -11,7 +11,13 @@ natprim :: forall (r::*) . (r->r) -> r -> Nat -> r;
 natprim r succ zero n = n r zero succ;
 
 add :: Nat -> Nat -> Nat;
-add x y = x Nat y (\ r :: Nat -> Succ r);
+add x y = x Nat y Succ;
+
+mul :: Nat -> Nat -> Nat;
+mul x y = x Nat 0 (add y);
+
+power :: Nat -> Nat -> Nat;
+power x y = y Nat (Succ 0) (mul x);
 
 isZero :: Nat -> Bool;
 isZero n = n Bool True (\ a::Bool -> False);
