@@ -1,13 +1,13 @@
 -- The Bool type.
 
 Bool :: *;
-Bool = forall (bool::*) . bool->bool->bool;
+Bool = forall (boolT::*) . boolT->boolT->boolT;
 
 False :: Bool;
-False = \ (bool::*) (false::bool) (true::bool) -> false;
+False = \ (boolT::*) (false::boolT) (true::boolT) -> false;
 
 True  :: Bool;
-True = \ (bool::*) (false::bool) (true::bool) -> true;
+True = \ (boolT::*) (false::boolT) (true::boolT) -> true;
 
 if :: forall (a::*) . Bool -> a -> a -> a;
 if a b t f = b a f t;

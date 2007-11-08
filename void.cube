@@ -1,3 +1,3 @@
 Void :: *;
-Void = forall r::* . r;
+Void = forall voidT::* . voidT;
 void (r::*) (v::Void) :: r = v r;

@@ -1,8 +1,8 @@
 Either :: * -> * -> *;
-Either a b = forall (r::*) . (a->r) -> (b->r) -> r;
+Either a b = forall (eitherT::*) . (a->eitherT) -> (b->eitherT) -> eitherT;
 
 Left :: forall (a::*) (b::*) . a -> Either a b;
-Left a b x = \ (r::*) (left::a->r) (right::b->r) -> left x;
+Left a b x = \ (eitherT::*) (left::a->eitherT) (right::b->eitherT) -> left x;
 
 Right :: forall (a::*) (b::*) . b -> Either a b;
 Right a b y = \ (r::*) (left::a->r) (right::b->r) -> right y;

@@ -1,11 +1,11 @@
 List :: * -> *;
-List e = forall (list::*) . list -> (e->list->list) -> list;
+List e = forall (listT::*) . listT -> (e->listT->listT) -> listT;
 
 Nil :: forall (e::*) . List e;
-Nil e = \ (list::*) (nil::list) (cons::e->list->list) -> nil;
+Nil e = \ (listT::*) (nil::listT) (cons::e->listT->listT) -> nil;
 
 Cons :: forall (e::*) . e -> List e -> List e;
-Cons e x xs = \ (list::*) (nil::list) (cons::e->list->list) -> cons x (xs list nil cons);
+Cons e x xs = \ (listT::*) (nil::listT) (cons::e->listT->listT) -> cons x (xs listT nil cons);
 
 foldr :: forall (a::*) (b::*) . (a->b->b) -> b -> List a -> b;
 foldr a b f z xs = xs b z f;

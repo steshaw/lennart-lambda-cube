@@ -1,11 +1,11 @@
 Maybe :: * -> *;
-Maybe a = forall (r::*) . r->(a->r)->r;
+Maybe a = forall (maybeT::*) . maybeT->(a->maybeT)->maybeT;
 
 Nothing :: forall (a::*) . Maybe a;
-Nothing a = \ (r::*) (nothing::r) (just::a->r) -> nothing;
+Nothing a = \ (maybeT::*) (nothing::maybeT) (just::a->maybeT) -> nothing;
 
 Just :: forall (a::*) . a -> Maybe a;
-Just a x = \ (r::*) (nothing::r) (just::a->r) -> just x;
+Just a x = \ (maybeT::*) (nothing::maybeT) (just::a->maybeT) -> just x;
 
 maybe :: forall (a::*) (r::*) . r -> (a->r) -> Maybe a -> r;
 maybe a r nothing just s = s r nothing just;
