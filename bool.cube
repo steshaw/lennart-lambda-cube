@@ -10,7 +10,7 @@ True  :: Bool;
 True = \ (a::*) (false::a) (true::a) -> true;
 
 if :: forall (a::*) . Bool -> a -> a -> a;
-if a b t f = b a t f;
+if a b t f = b a f t;
 
 not :: Bool -> Bool;
 not b = if Bool b False True;
