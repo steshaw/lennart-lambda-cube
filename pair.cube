@@ -2,7 +2,7 @@ Pair :: * -> * -> *;
 Pair a b = forall (r::*) . (a->b->r) -> r;
 
 pair :: forall (a::*) (b::*) . a -> b -> Pair a b;
-pair a b x y = \ (r::*) (f :: a->b->r) -> f x y;
+pair a b x y = \ (r::*) (pair :: a->b->r) -> pair x y;
 
 split :: forall (a::*) (b::*) (r::*) . (a->b->r) -> Pair a b -> r;
 split a b r f p = p r f;

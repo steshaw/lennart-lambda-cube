@@ -4,10 +4,10 @@ Bool :: *;
 Bool = forall (a::*) . a->a->a;
 
 False :: Bool;
-False = \ (a::*) (x::a) (y::a) -> x;
+False = \ (a::*) (false::a) (true::a) -> false;
 
 True  :: Bool;
-True = \ (a::*) (x::a) (y::a) -> y;
+True = \ (a::*) (false::a) (true::a) -> true;
 
 if :: forall (a::*) . Bool -> a -> a -> a;
 if a b t f = b a t f;
