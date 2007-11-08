@@ -12,4 +12,4 @@ test:	cube $(CUBES)
 
 .PHONY:	clean
 clean:
-	rm -rf *.o *.hi *~
+	rm -rf *.o *.hi *~ cube
