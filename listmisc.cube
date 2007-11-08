@@ -18,3 +18,9 @@ iota n =
 
 replicate :: forall (a::*) . Nat -> a -> List a;
 replicate a n x = map Nat a (const a Nat x) (iota n);
+
+any :: forall a::* . (a -> Bool) -> List a -> Bool;
+any a p = foldr a Bool (\ (x::a) -> or (p x)) False;
+
+all :: forall a::* . (a -> Bool) -> List a -> Bool;
+all a p = foldr a Bool (\ (x::a) -> and (p x)) True;
