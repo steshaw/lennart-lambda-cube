@@ -1,0 +1,6 @@
+Type:
+forall (Char :: *) .
+       Char->forall (a' :: *) . a'->(Char->a'->a')->a'
+Value:
+\ (Char :: *) ('b' :: Char) (a :: *) (nil :: a)
+  (cons :: Char->a->a) -> cons 'b' (cons 'b' (cons 'b' nil))

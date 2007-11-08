@@ -1,0 +1,12 @@
+Name:		Cube
+Version:	2007.11.08
+License:	BSD3
+License-file:	LICENSE
+Author:		Lennart Augustsson
+Category:	source-tools
+Synopsis:	A simple lambda cube type checker
+Build-Depends:	base, pretty, mtl
+
+Executable:	cube
+Main-Is:	Cube.hs
+Other-modules:	CubeExpr

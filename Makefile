@@ -1,15 +1,16 @@
 .PHONY:	all
 all:	cube
 
-cube:	Main.hs Cube.hs
-	ghc --make -Wall Main.hs -o cube
+cube:	Cube.hs CubeExpr.hs
+	ghc --make -Wall Cube.hs -o cube
 
 CUBES=	misc.cube bool.cube pair.cube maybe.cube either.cube nat.cube list.cube unit.cube void.cube exists.cube
 
 .PHONY:	test
 test:	cube $(CUBES)
-	./cube - $(CUBES) test.cube
+	./cube - $(CUBES) test.cube > test.out
+	cmp test.ok test.out && echo Test OK
 
 .PHONY:	clean
 clean:
-	rm -rf *.o *.hi *~ cube
+	rm -rf *.o *.hi *~ cube setup dist
