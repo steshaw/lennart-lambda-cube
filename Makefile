@@ -1,8 +1,10 @@
+GHC=	ghc
+
 .PHONY:	all
 all:	cube
 
 cube:	Cube.hs CubeExpr.hs
-	ghc --make -Wall Cube.hs -o cube
+	$(GHC) --make -Wall Cube.hs -o cube
 
 CUBES=	misc.cube bool.cube pair.cube maybe.cube either.cube nat.cube list.cube unit.cube void.cube exists.cube
 
@@ -13,4 +15,4 @@ test:	cube $(CUBES)
 
 .PHONY:	clean
 clean:
-	rm -rf *.o *.hi *~ cube setup dist
+	rm -rf *.o *.hi *~ cube setup dist test.out
