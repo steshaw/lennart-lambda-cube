@@ -126,7 +126,11 @@ tCheck r (App f a) = do
     case tf of
      Pi x at rt -> do
         ta <- tCheck r a
-        when (not (betaEq ta at)) $ throwError $ "Bad function argument type: " ++ show (App f a) ++ "\n" ++ show (ta, at)
+        when (not (betaEq ta at)) $ throwError $ "Bad function argument type:\n" ++
+	     	  	     	    	       	 "Function: " ++ show (nf f) ++ "\n" ++
+						 "    arg type: " ++ show at ++ "\n" ++
+						 "Argument: " ++ show (nf a) ++ "\n" ++
+						 "    type: " ++ show ta
         return $ subst x a rt
      _ -> throwError $ "Non-function in application: " ++ show tf
 tCheck r (Lam s t e) = do
