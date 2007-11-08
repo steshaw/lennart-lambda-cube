@@ -19,22 +19,5 @@ map a b f xs = foldr a (List b) (\ (x::a) (r::List b) -> Cons b (f x) r) (Nil b)
 append :: forall (a::*) . List a -> List a -> List a;
 append a xs ys = foldr a (List a) (Cons a) ys xs;
 
-iota :: Nat -> List Nat;
-iota n =
-    let LNat :: *;
-    	LNat = List Nat;
-        T :: *;
-        T = Pair Nat LNat;
-        step :: T -> T;
-        step nl = split Nat LNat T
-                        (\ (n::Nat) (l::LNat) -> pair Nat LNat
-			   	    	     	      (Succ n) (Cons Nat n l))
-			nl;
-	start :: T;
-	start = pair Nat LNat 0 (Nil Nat);
-        res :: T;
-	res = nat T step start n;
-    in  snd Nat LNat res;
-
-replicate :: forall (a::*) . Nat -> a -> List a;
-replicate a n x = map Nat a (const a Nat x) (iota n);
+reverse :: forall (a::*) . List a -> List a;
+reverse a xs = foldl a (List a) (\ (r :: List a) (x :: a) -> Cons a x r) (Nil a) xs;

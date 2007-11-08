@@ -1,0 +1,20 @@
+
+iota :: Nat -> List Nat;
+iota n =
+    let LNat :: *;
+    	LNat = List Nat;
+        T :: *;
+        T = Pair Nat LNat;
+        step :: T -> T;
+        step nl = split Nat LNat T
+                        (\ (n::Nat) (l::LNat) -> pair Nat LNat
+			   	    	     	      (Succ n) (Cons Nat n l))
+			nl;
+	start :: T;
+	start = pair Nat LNat 0 (Nil Nat);
+        res :: T;
+	res = nat T step start n;
+    in  reverse Nat (snd Nat LNat res);
+
+replicate :: forall (a::*) . Nat -> a -> List a;
+replicate a n x = map Nat a (const a Nat x) (iota n);
