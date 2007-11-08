@@ -1,11 +1,11 @@
 Nat :: *;
-Nat = forall (a::*) . a -> (a->a) -> a;
+Nat = forall (nat::*) . nat -> (nat->nat) -> nat;
 
 0 :: Nat;
-0 = \ (a::*) (z::a) (s::a->a) -> z;
+0 = \ (nat::*) (zero::nat) (succ::nat->nat) -> zero;
 
 Succ :: Nat -> Nat;
-Succ n = \ (a::*) (z::a) (s::a->a) -> s (n a z s);
+Succ n = \ (nat::*) (zero::nat) (succ::nat->nat) -> succ (n nat zero succ);
 
 nat :: forall (r::*) . (r->r) -> r -> Nat -> r;
 nat r succ zero n = n r zero succ;
