@@ -1,21 +1,23 @@
 -- Simple interface to lambda cube type checker.
 import System.Environment(getArgs)
+import Data.Char(isSpace)
 import Data.List(sortBy)
 import Data.Function(on)
+import REPL
 import CubeExpr
 
 main :: IO ()
 main = do
     args <- getArgs
     case args of
-	["-?"] -> help
-	["-help"] -> help
-	["--help"] -> help
+	["-?"] -> usage
+	["-help"] -> usage
+	["--help"] -> usage
         [] -> interactive
 	_  -> batch args
 
-help :: IO ()
-help = putStr "\
+usage :: IO ()
+usage = putStr "\
 \Usage: cube           -- start in interactive mode\n\
 \       cube files     -- concatenate files, type check, evaluate\n\
 \       cube - files   -- insert let&in, concatenate files, type check, evaluate\n\
@@ -50,4 +52,60 @@ unreads s =
 	    in  Left $ "line " ++ show (ls - lrest) ++ ": " ++ rest
 
 interactive :: IO ()
-interactive = undefined
+interactive = repl $ REPL { repl_init = cinit, repl_eval = ceval, repl_exit = cexit }
+  where cinit = do
+          putStrLn "Welcome to the Cube."
+	  putStrLn "Use :help to get help."
+	  return ("Cube> ", "")
+	cexit _ = putStrLn "Bye."
+	ceval s line = do
+	    let rest = dropWhile isSpace $ dropWhile (not . isSpace) line
+	        load = readFile rest >>= addFile s
+		quit = return (True, s)
+		help = do putStrLn helpMsg; return (False, s)
+	    case words line of
+	      [] -> return (False, s)
+	      ":h" : _ -> help
+	      ":help" : _ -> help
+	      ":q" : _ -> quit
+	      ":quit" : _ -> quit
+	      ":let" : _ -> addFile s (rest ++ ";\n")
+	      ":l" : _ -> load
+	      ":load" : _ -> load
+	      ":defs" : _ -> do putStrLn s; return (False, s)
+	      _ -> do evalPrint s line 
+	              return (False, s)
+
+        evalPrint s se = do
+	    mt <- readAndCheck s se
+	    case mt of
+	         Nothing -> return ()
+		 Just (e, t) -> do
+		     let v = nf e
+		     putStrLn $ show v ++ "\n  ::\n" ++ show t
+	    return (False, s)
+
+        addFile s n = do
+	     mt <- readAndCheck (s ++ n) "\\ (a::*) -> a"
+	     case mt of
+	         Nothing -> return (False, s)
+		 Just _ ->  return (False, s ++ n)
+
+	readAndCheck s e =
+	     case unreads $ "let " ++ s ++ " in " ++ e of
+	     Left msg -> do putStrLn $ "Syntax error: " ++ msg; return Nothing
+	     Right expr ->
+	         case typeCheck expr of
+		 Left msg -> do putStrLn $ "Type error: " ++ msg; return Nothing
+		 Right typ -> return $ Just (expr, typ)
+
+helpMsg :: String
+helpMsg = "\
+\Commands:\n\
+\  :defs        show loaded definitions\n\
+\  :let def     add definition\n\
+\  :load name   load file with definitions\n\
+\  :help        show this message\n\
+\  :quit        quit\n\
+\  expr         evaluate expression\n\
+\"

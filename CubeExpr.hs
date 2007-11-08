@@ -7,7 +7,7 @@ import Data.List(union, (\\))
 import Control.Monad.Error
 import Text.PrettyPrint.HughesPJ(Doc, renderStyle, style, text, (<>), (<+>), parens, ($$),
        				 vcat, punctuate, sep, fsep, nest)
-import Text.ParserCombinators.ReadP(ReadP, (+++), char, munch1, many1, string, pfail, sepBy1,
+import Text.ParserCombinators.ReadP(ReadP, (+++), char, munch1, many1, string, pfail, sepBy,
                                     optional, many, skipSpaces, readP_to_S, look)
 
 type Sym = String
@@ -249,7 +249,7 @@ pApply = do
 pLet :: ReadP Expr
 pLet = do
     skeyword "let"
-    stes <- sepBy1 pBind (schar ';')
+    stes <- sepBy pBind (schar ';')
     optional (schar ';')
     skeyword "in"
     b <- pExpr
