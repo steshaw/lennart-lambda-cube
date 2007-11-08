@@ -1,13 +1,13 @@
-module PTS(Sym, Expr(..), Type,
-           subst, nf, alphaEq, typeCheck
-          ) where
+module Cube(Sym, Expr(..), Type,
+            subst, nf, alphaEq, typeCheck
+           ) where
 import Char(isAlphaNum, isAlpha)
 import List(union, (\\))
 import Control.Monad.Error
 import Text.PrettyPrint.HughesPJ(Doc, renderStyle, style, text, (<>), (<+>), parens, ($$),
        				 vcat, punctuate, sep, fsep, nest)
 import Text.ParserCombinators.ReadP(ReadP, (+++), char, munch1, many1, string, pfail, sepBy1,
-	 optional, many, skipSpaces, readP_to_S, look)
+                                    optional, many, skipSpaces, readP_to_S, look)
 
 type Sym = String
 
@@ -152,11 +152,11 @@ tCheckRed r e = do
     t <- tCheck r e
     return $ whnf t
 
-typeCheck :: Expr -> Type
-typeCheck e =
-    case tCheck initalEnv e of
-    Left msg -> error ("Type error:\n" ++ msg)
-    Right t -> nf t
+typeCheck :: Expr -> Either ErrorMsg Type
+typeCheck e = fmap nf $ tCheck initalEnv e
+--    case  of
+--    Left msg -> error ("Type error:\n" ++ msg)
+--    Right t -> nf t
 
 ---------------------------------------------------------------------
 

@@ -1,0 +1,6 @@
+let Char :: *;
+    'b' :: Char;
+in
+
+replicate Char 3 'b'
+

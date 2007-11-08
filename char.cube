@@ -1,0 +1,14 @@
+Char :: *;
+Char = forall (a::*) . a->a->a->a->a;
+
+'a' :: Char;
+'a' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xa;
+'b' :: Char;
+'b' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xb;
+'c' :: Char;
+'c' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xc;
+'d' :: Char;
+'d' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xd;
+
+-------------------------------------------------
+

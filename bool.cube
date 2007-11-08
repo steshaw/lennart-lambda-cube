@@ -1,0 +1,22 @@
+-- The Bool type.
+
+Bool :: *;
+Bool = forall (a::*) . a->a->a;
+
+False :: Bool;
+False = \ (a::*) (x::a) (y::a) -> x;
+
+True  :: Bool;
+True = \ (a::*) (x::a) (y::a) -> y;
+
+if :: forall (a::*) . Bool -> a -> a -> a;
+if a b t f = b a t f;
+
+not :: Bool -> Bool;
+not b = if Bool b False True;
+
+and :: Bool -> Bool -> Bool;
+and x y = if Bool x y False;
+
+or :: Bool -> Bool -> Bool;
+or x y = if Bool x True y;

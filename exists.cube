@@ -1,0 +1,8 @@
+Exists :: forall (a::*) . (a->*) -> *;
+Exists a p = forall (r::*) . (forall x::a . (p x -> r)) -> r;
+
+pack :: forall (a::*) (p::a->*) . (x :: a) -> p x -> Exists a p;
+pack a p x q = \ (r::*) (f :: (forall y::a . (p y -> r))) -> f x q;
+
+unpack :: forall (a::*) (p::a->*) (r::*) . ((x::a)->p x->r) -> Exists a p -> r;
+unpack a p r f e = e r f;

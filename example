@@ -1,212 +1,33 @@
 let
 
-id :: forall (a::*) . a -> a;
-id a x = x;
+-------------------------------------------------
 
-const :: forall (a::*) (b::*) . a -> b -> a;
-const a b x y = x;
 
 -------------------------------------------------
 
-Bool :: *;
-Bool = forall (a::*) . a->a->a;
-
-False :: Bool;
-False = \ (a::*) (x::a) (y::a) -> x;
-
-True  :: Bool;
-True = \ (a::*) (x::a) (y::a) -> y;
-
-if :: forall (a::*) . Bool -> a -> a -> a;
-if a b t f = b a t f;
-
-not :: Bool -> Bool;
-not b = if Bool b False True;
-
-and :: Bool -> Bool -> Bool;
-and x y = if Bool x y False;
-
-or :: Bool -> Bool -> Bool;
-or x y = if Bool x True y;
 
 -------------------------------------------------
 
-Pair :: * -> * -> *;
-Pair a b = forall (r::*) . (a->b->r) -> r;
-
-pair :: forall (a::*) (b::*) . a -> b -> Pair a b;
-pair a b x y = \ (r::*) (f :: a->b->r) -> f x y;
-
-split :: forall (a::*) (b::*) (r::*) . (a->b->r) -> Pair a b -> r;
-split a b r f p = p r f;
-
-fst :: forall (a::*) (b::*) . Pair a b -> a;
-fst a b p = split a b a (\ (x::a) (y::b) -> x) p;
-
-snd :: forall (a::*) (b::*) . Pair a b -> b;
-snd a b p = split a b b (\ (x::a) (y::b) -> y) p;
 
 -------------------------------------------------
 
-Maybe :: * -> *;
-Maybe a = forall (r::*) . r->(a->r)->r;
-
-Nothing :: forall (a::*) . Maybe a;
-Nothing a = \ (r::*) (nothing::r) (just::a->r) -> nothing;
-
-Just :: forall (a::*) . a -> Maybe a;
-Just a x = \ (r::*) (nothing::r) (just::a->r) -> just x;
-
-maybe :: forall (a::*) (r::*) . r -> (a->r) -> Maybe a -> r;
-maybe a r nothing just s = s r nothing just;
 
 -------------------------------------------------
 
-Either :: * -> * -> *;
-Either a b = forall (r::*) . (a->r) -> (b->r) -> r;
-
-Left :: forall (a::*) (b::*) . a -> Either a b;
-Left a b x = \ (r::*) (left::a->r) (right::b->r) -> left x;
-
-Right :: forall (a::*) (b::*) . b -> Either a b;
-Right a b y = \ (r::*) (left::a->r) (right::b->r) -> right y;
-
-either :: forall (a::*) (b::*) (r::*) . (a->r) -> (b->r) -> Either a b -> r;
-either a b r left right s = s r left right;
 
 -------------------------------------------------
 
-Nat :: *;
-Nat = forall (a::*) . a -> (a->a) -> a;
-
-0 :: Nat;
-0 = \ (a::*) (z::a) (s::a->a) -> z;
-
-Succ :: Nat -> Nat;
-Succ n = \ (a::*) (z::a) (s::a->a) -> s (n a z s);
-
-nat :: forall (r::*) . (r->r) -> r -> Nat -> r;
-nat r succ zero n = n r zero succ;
-
---dnat :: forall (c::Nat->*) . (forall (i :: Nat) . c i -> c (Succ i)) ->
---     	       		     c 0 ->
---			     (n::Nat) ->
---			     c n;
-
-add :: Nat -> Nat -> Nat;
-add x y = x Nat y (\ r :: Nat -> Succ r);
-
-isZero :: Nat -> Bool;
-isZero n = n Bool True (\ a::Bool -> False);
-
-1 :: Nat;
-1 = Succ 0;
-2 :: Nat;
-2 = Succ 1;
-3 :: Nat;
-3 = Succ 2;
 
 -------------------------------------------------
 
-List :: * -> *;
-List e = forall (a::*) . a -> (e->a->a) -> a;
-
-Nil :: forall (e::*) . List e;
-Nil e = \ (a::*) (nil::a) (cons::e->a->a) -> nil;
-
-Cons :: forall (e::*) . e -> List e -> List e;
-Cons e x xs = \ (a::*) (nil::a) (cons::e->a->a) -> cons x (xs a nil cons);
-
-foldr :: forall (a::*) (b::*) . (a->b->b) -> b -> List a -> b;
-foldr a b f z xs = xs b z f;
-
-map :: forall (a::*) (b::*) . (a->b) -> List a -> List b;
-map a b f xs = foldr a (List b) (\ (x::a) (r::List b) -> Cons b (f x) r) (Nil b) xs;
-
-append :: forall (a::*) . List a -> List a -> List a;
-append a xs ys = foldr a (List a) (Cons a) ys xs;
-
-iota :: Nat -> List Nat;
-iota n =
-    let LNat :: *;
-    	LNat = List Nat;
-        T :: *;
-        T = Pair Nat LNat;
-        step :: T -> T;
-        step nl = split Nat LNat T
-                        (\ (n::Nat) (l::LNat) -> pair Nat LNat
-			   	    	     	      (Succ n) (Cons Nat n l))
-			nl;
-	start :: T;
-	start = pair Nat LNat 0 (Nil Nat);
-        res :: T;
-	res = nat T step start n;
-    in  snd Nat LNat res;
-
-replicate :: forall (a::*) . Nat -> a -> List a;
-replicate a n x = map Nat a (const a Nat x) (iota n);
 
 -------------------------------------------------
 
-Unit :: *;
-Unit = forall r::* . r -> r;
-unit :: Unit;
-unit = \ (r::*) (x::r) -> x;
 
 -------------------------------------------------
 
-Void :: *;
-Void = forall r::* . r;
-void (r::*) (v::Void) :: r = v r;
 
 -------------------------------------------------
-
-Char :: *;
-Char = forall (a::*) . a->a->a->a->a;
-
-'a' :: Char;
-'a' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xa;
-'b' :: Char;
-'b' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xb;
-'c' :: Char;
-'c' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xc;
-'d' :: Char;
-'d' = \ (a::*) (xa::a) (xb::a) (xc::a) (xd::a) -> xd;
-
--------------------------------------------------
-
-Exists :: forall (a::*) . (a->*) -> *;
-Exists a p = forall (r::*) . (forall x::a . (p x -> r)) -> r;
-
-pack :: forall (a::*) (p::a->*) . (x :: a) -> p x -> Exists a p;
-pack a p x q = \ (r::*) (f :: (forall y::a . (p y -> r))) -> f x q;
-
-unpack :: forall (a::*) (p::a->*) (r::*) . ((x::a)->p x->r) -> Exists a p -> r;
-unpack a p r f e = e r f;
-
--------------------------------------------------
-
---Tnat :: (*->*) -> * -> Nat -> *;
---Tnat succ zero n = n * zero succ;
-
-NotZero :: Nat -> *;
-NotZero n = nat * (\ (x::*) -> Unit) Void n;
-
-notZero1 :: NotZero 1;
-notZero1 = unit;
-
---notZero0 :: NotZero 0;
---notZero0 = unit;
-
---pred :: (n :: Nat) -> NotZero n -> Nat;
---pred n nz = nat Nat (\ (n::Nat) -> 0) (void Nat nz) n;
 
 in
---let Char :: *;
---    'b' :: Char;
---in
 
---Cons Char 'a' (Cons Char 'b' (Nil Char))
---replicate Char 3 'b'
---unit
-and True True

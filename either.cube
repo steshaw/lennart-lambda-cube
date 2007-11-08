@@ -1,0 +1,11 @@
+Either :: * -> * -> *;
+Either a b = forall (r::*) . (a->r) -> (b->r) -> r;
+
+Left :: forall (a::*) (b::*) . a -> Either a b;
+Left a b x = \ (r::*) (left::a->r) (right::b->r) -> left x;
+
+Right :: forall (a::*) (b::*) . b -> Either a b;
+Right a b y = \ (r::*) (left::a->r) (right::b->r) -> right y;
+
+either :: forall (a::*) (b::*) (r::*) . (a->r) -> (b->r) -> Either a b -> r;
+either a b r left right s = s r left right;

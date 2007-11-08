@@ -1,0 +1,8 @@
+-- Some useful functions.
+
+id :: forall (a::*) . a -> a;
+id a x = x;
+
+const :: forall (a::*) (b::*) . a -> b -> a;
+const a b x y = x;
+
