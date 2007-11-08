@@ -1,6 +1,6 @@
 module CubeExpr(
     Sym, Expr(..), Type,
-    subst, nf, alphaEq, typeCheck
+    subst, nf, alphaEq, typeCheck, skipLambda
     ) where
 import Data.Char(isAlphaNum, isAlpha)
 import Data.List(union, (\\))
@@ -144,7 +144,7 @@ tCheck r (Pi x a b) = do
     s <- tCheckRed r a
     let r' = extend x a r
     t <- tCheckRed r' b
-    when ((s, t) `notElem` allowedKinds) $ throwError "Bad abstraction"
+    when ((s, t) `notElem` allowedKinds) $ throwError $ "Bad abstraction: " ++ show (Pi x a b)
     return t
 tCheck _ (Kind Star) = return $ Kind Box
 tCheck _ (Kind Box) = throwError "Found a Box"
@@ -387,3 +387,9 @@ skeyword s = do
 
 isSym :: Char -> Bool
 isSym c = isAlphaNum c || c `elem` "_'"
+
+-------
+
+skipLambda :: Expr -> Type -> (Expr, Type)
+skipLambda (Lam _ _ e) (Pi _ _ t) = skipLambda e t
+skipLambda e t = (e, t)
