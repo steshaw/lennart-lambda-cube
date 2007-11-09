@@ -115,6 +115,7 @@ tCheck :: Env -> Expr -> TC Type
 tCheck r (Var s) =
     findVar r s
 tCheck r (Let s t a e) = do
+    --tCheck r (expandLet s t a e)
     tCheck r t
     ta <- tCheck r a
     when (not (betaEq ta t)) $ throwError $ "Bad let def\n" ++ show (ta, t)
@@ -128,9 +129,9 @@ tCheck r (App f a) = do
         ta <- tCheck r a
         when (not (betaEq ta at)) $ throwError $ "Bad function argument type:\n" ++
 	     	  	     	    	       	 "Function: " ++ show (nf f) ++ "\n" ++
-						 "    arg type: " ++ show at ++ "\n" ++
-						 "Argument: " ++ show (nf a) ++ "\n" ++
-						 "    type: " ++ show ta
+						 "argument: " ++ show (nf a) ++ "\n" ++
+						 "expected type: " ++ show at ++ "\n" ++
+						 "     got type: " ++ show ta
         return $ subst x a rt
      _ -> throwError $ "Non-function in application: " ++ show tf
 tCheck r (Lam s t e) = do
@@ -162,6 +163,12 @@ typeCheck e = fmap nf $ tCheck initalEnv e
 --    case  of
 --    Left msg -> error ("Type error:\n" ++ msg)
 --    Right t -> nf t
+
+typeCheck' :: Expr -> Type
+typeCheck' e =
+    case tCheck initalEnv e of
+    Left msg -> error ("Type error:\n" ++ msg)
+    Right t -> nf t
 
 ---------------------------------------------------------------------
 
