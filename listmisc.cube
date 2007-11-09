@@ -7,11 +7,11 @@ iota n =
         T = Pair Nat LNat;
         step :: T -> T;
         step nl = split Nat LNat T
-                        (\ (n::Nat) (l::LNat) -> pair Nat LNat
-			   	    	     	      (Succ n) (Cons Nat n l))
+                        (\ (n::Nat) (l::LNat) -> PairC Nat LNat
+			   	    	     	       (Succ n) (Cons Nat n l))
 			nl;
 	start :: T;
-	start = pair Nat LNat 0 (Nil Nat);
+	start = PairC Nat LNat 0 (Nil Nat);
         res :: T;
 	res = natprim T step start n;
     in  reverse Nat (snd Nat LNat res);

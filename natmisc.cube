@@ -5,9 +5,9 @@ pred n =
     let BN :: *;
         BN = Pair Bool Nat;
         step :: BN -> BN;
-        step = split Bool Nat BN (\ (b::Bool) (p::Nat) -> pair Bool Nat True (if Nat b (Succ p) 0));
+        step = split Bool Nat BN (\ (b::Bool) (p::Nat) -> PairC Bool Nat True (if Nat b (Succ p) 0));
         bn :: BN;
-        bn = natprim BN step (pair Bool Nat False 0) n;
+        bn = natprim BN step (PairC Bool Nat False 0) n;
     in  snd Bool Nat bn;
 
 -- This subtraction is O(m*n).  Wow, it's bad. :)

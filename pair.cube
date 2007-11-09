@@ -1,14 +1,14 @@
 Pair :: * -> * -> *;
 Pair a b = forall (pairT::*) . (a->b->pairT) -> pairT;
 
-pair :: forall (a::*) (b::*) . a -> b -> Pair a b;
-pair a b x y = \ (pairT::*) (pair :: a->b->pairT) -> pair x y;
+PairC :: forall (a::*) (b::*) . a -> b -> Pair a b;
+PairC a b x y = \ (pairT::*) (pair :: a->b->pairT) -> pair x y;
+
+fst :: forall (a::*) (b::*) . Pair a b -> a;
+fst a b p = p a (\ (x::a) (y::b) -> x);
+
+snd :: forall (a::*) (b::*) . Pair a b -> b;
+snd a b p = p b (\ (x::a) (y::b) -> y);
 
 split :: forall (a::*) (b::*) (r::*) . (a->b->r) -> Pair a b -> r;
 split a b r f p = p r f;
-
-fst :: forall (a::*) (b::*) . Pair a b -> a;
-fst a b p = split a b a (\ (x::a) (y::b) -> x) p;
-
-snd :: forall (a::*) (b::*) . Pair a b -> b;
-snd a b p = split a b b (\ (x::a) (y::b) -> y) p;
