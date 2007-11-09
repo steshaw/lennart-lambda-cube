@@ -1,0 +1,21 @@
+-- Predecessor, (provably) takes O(n) with these kind of numbers.
+-- pred 0 = 0
+pred :: Nat -> Nat;
+pred n = 
+    let BN :: *;
+        BN = Pair Bool Nat;
+        step :: BN -> BN;
+        step = split Bool Nat BN (\ (b::Bool) (p::Nat) -> pair Bool Nat True (if Nat b (Succ p) 0));
+        bn :: BN;
+        bn = natprim BN step (pair Bool Nat False 0) n;
+    in  snd Bool Nat bn;
+
+-- This subtraction is O(m*n).  Wow, it's bad. :)
+sub :: Nat -> Nat -> Nat;
+sub x y = natprim Nat pred x y;
+
+leNat :: Nat -> Nat -> Bool;
+leNat x y = isZero (sub x y);
+
+eqNat :: Nat -> Nat -> Bool;
+eqNat x y = and (leNat x y) (leNat y x);

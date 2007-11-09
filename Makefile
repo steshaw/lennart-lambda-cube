@@ -6,7 +6,8 @@ all:	cube
 cube:	Cube.hs CubeExpr.hs
 	$(GHC) --make -Wall Cube.hs -o cube
 
-CUBES=	misc.cube bool.cube pair.cube maybe.cube either.cube nat.cube list.cube listmisc.cube unit.cube void.cube exists.cube
+CUBES=	misc.cube bool.cube pair.cube maybe.cube either.cube nat.cube natmisc.cube \
+	list.cube listmisc.cube unit.cube void.cube exists.cube
 
 .PHONY:	test
 test:	cube $(CUBES)
